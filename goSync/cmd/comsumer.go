@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"goSync/db"
-	"goSync/models"
+	"github.com/QuantDevops/SyncHub/goSync/db"
+	"github.com/QuantDevops/SyncHub/goSync/models"
 
 	"github.com/segmentio/kafka-go"
 )

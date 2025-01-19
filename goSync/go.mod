@@ -1,4 +1,4 @@
-module goSync
+module github.com/QuantDevops/SyncHub/goSync
 
 go 1.23.4
 

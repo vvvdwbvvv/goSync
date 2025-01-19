@@ -16,7 +16,7 @@ message PriceRequest {
 message PriceResponse {
   string symbol = 1;
   double price = 2;
-  double volume = 3;
+  double qty = 3;
 }
 
 message TradeHistoryRequest {

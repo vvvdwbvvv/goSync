@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	market "goSync/proto"
+	market "github.com/QuantDevops/SyncHub/goSync/proto"
 	"log"
 	"net"
 
 	"github.com/go-redis/redis/v8"
-	"goSync/proto/market"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
