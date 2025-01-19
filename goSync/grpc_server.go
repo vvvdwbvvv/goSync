@@ -57,21 +57,21 @@ func (s *marketDataServer) GetLatestPrice(ctx context.Context, req *market.Price
 	}, nil
 }
 
-func main() {
-	// init redis
+func StartGRPC() {
+	// init Redis
 	initRedis()
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		log.Fatalf("can;t listen: %v", err)
+		log.Fatalf("❌ Failed to listen on port 50051: %v", err)
 	}
-	grpcServer := grpc.NewServer()
 
+	grpcServer := grpc.NewServer()
 	market.RegisterMarketDataServiceServer(grpcServer, &marketDataServer{})
 
-	log.Println("gRPC server running on 50051...")
+	log.Println("🚀 gRPC server is running on port 50051...")
 
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("gRPC service failed at launch: %v", err)
+		log.Fatalf("❌ gRPC service failed: %v", err)
 	}
 }
