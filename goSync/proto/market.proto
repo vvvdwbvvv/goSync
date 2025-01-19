@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package market;
 
-option go_package = "github.com/QuantDevops/SyncHub/goSync/proto/market;market";
+option go_package = "github.com/QuantDevops/SyncHub/goSync/proto;market";
 
 service MarketDataService {
   rpc GetLatestPrice (PriceRequest) returns (PriceResponse);
