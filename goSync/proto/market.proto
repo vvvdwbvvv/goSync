@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package market;
+
+option go_package = "goSync/proto/market;market";
+
+service MarketDataService {
+  rpc GetLatestPrice (PriceRequest) returns (PriceResponse);
+  rpc GetTradeHistory (TradeHistoryRequest) returns (TradeHistoryResponse);
+}
+
+message PriceRequest {
+  string symbol = 1;
+}
+
+message PriceResponse {
+  string symbol = 1;
+  double price = 2;
+  double volume = 3;
+}
+
+message TradeHistoryRequest {
+  string symbol = 1;
+  int32 limit = 2;
+}
+
+message TradeHistoryResponse {
+  repeated Trade trades = 1;
+}
+
+message Trade {
+  string symbol = 1;
+  double price = 2;
+  double volume = 3;
+  int64 timestamp = 4;
+}
