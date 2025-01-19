@@ -50,7 +50,7 @@ def produce_mock_data():
         producer.send(TOPIC, value=data, key=symbol.encode("utf-8"))
         print(f"Sent to Kafka: {data}")
 
-        time.sleep(0.1)
+        time.sleep(2)
 
 
 if __name__ == "__main__":

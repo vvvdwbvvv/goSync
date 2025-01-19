@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/QuantDevops/SyncHub/goSync/api"
 	"github.com/QuantDevops/SyncHub/goSync/cmd"
 	"github.com/QuantDevops/SyncHub/goSync/config"
 	"github.com/QuantDevops/SyncHub/goSync/db"
-	"log"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 	db.InitRedis()
 	db.InitTimescaleDB()
 
-	cmd.ConsumeKafka()
-	server.StartGRPC()
+	go cmd.ConsumeKafka()
+	api.StartGRPC()
+
 }

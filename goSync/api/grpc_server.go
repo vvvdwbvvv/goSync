@@ -3,13 +3,15 @@ package api
 import (
 	"context"
 	"fmt"
-	market "github.com/QuantDevops/SyncHub/goSync/proto"
 	"log"
 	"net"
+
+	market "github.com/QuantDevops/SyncHub/goSync/proto"
 
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
 
@@ -68,6 +70,8 @@ func StartGRPC() {
 
 	grpcServer := grpc.NewServer()
 	market.RegisterMarketDataServiceServer(grpcServer, &marketDataServer{})
+
+	reflection.Register(grpcServer)
 
 	log.Println("🚀 gRPC server is running on port 50051...")
 
