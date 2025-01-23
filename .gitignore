@@ -8,3 +8,15 @@
 /dataSources.local.xml
 .idea
 .vscode
+
+# Python virtual environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class

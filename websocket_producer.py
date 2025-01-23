@@ -14,7 +14,7 @@ class WebSocketUtils:
     async def connect(self):
         if self.connection is None:
             try:
-                self.connection = await websockets.connect(self.uri, timeout=10)
+                self.connection = await websockets.connect(self.uri)
                 print(f"Connected to {self.uri}")
             except Exception as e:
                 print(f"Failed to connect to {self.uri}: {e}")
@@ -28,10 +28,11 @@ class WebSocketUtils:
             print("WebSocket connection closed")
 
 class PublicStream(WebSocketUtils):
-    def __init__(self, uri, symbols):
+    def __init__(self, base_uri, symbols):
         self.symbols = symbols
-        self.topics = ["trade"] # Subscription messages
-        uri = f"{uri}{'/'.join([f'{symbol}@{topic}' for symbol in symbols for topic in self.topics])}"
+        self.topics = ["trade"]  # Subscription messages
+        streams = "/".join([f"{symbol}@{topic}" for symbol in symbols for topic in self.topics])
+        uri = f"{base_uri}{streams}"
         super().__init__(uri)
 
         self.producer = KafkaProducer(
@@ -40,28 +41,26 @@ class PublicStream(WebSocketUtils):
         )
 
     async def listen(self):
-        # Connect to websocket
         websocket = await self.connect()
 
-        # Listen for data
         while True:
             try:
                 message = await websocket.recv()
-                # Respond to ping messages
-                if "ping" in message:
-                    print(message)
-                    await self.respond_pong(websocket)
-                    continue
                 payload = json.loads(message)
-                symbol = payload.stream.split("@")[0]
-                data = payload.data
 
-                self.producer.send(self.TOPIC, value=data, key=symbol.encode("utf-8"))
+                # Extract relevant data from the payload
+                data = payload.get("data")
+                if data:
+                    print(f"Received data: {data}")
+
+                    # Send data to Kafka
+                    self.producer.send(KAFKA_TOPIC, value=data)
 
             except websockets.ConnectionClosed as e:
                 print(f"Connection closed: {e}")
                 print("Reconnecting...")
-                asyncio.create_task(self.listen())
+                await asyncio.sleep(5)  # Wait before reconnecting
+                await self.listen()
                 break
             except Exception as e:
                 print(f"Error receiving data: {e}")
@@ -86,4 +85,4 @@ def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
