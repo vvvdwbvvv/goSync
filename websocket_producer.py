@@ -46,6 +46,59 @@ class PublicStream(WebSocketUtils):
             try:
                 message = await websocket.recv()
                 payload = json.loads(message)
+                # print(payload)
+
+                '''
+                    Sample payload for a trade message:
+                    {
+                        "stream": "btcusdt@trade",
+                        "data": {
+                            "e": "trade",
+                            "E": 1626070800000,
+                            "s": "BTCUSDT",
+                            "t": 12345,
+                            "p": "30000.00",
+                            "q": "0.001",
+                            "b": 123456,
+                            "a": 654321,
+                            "T": 1626070800001,
+                            "m": true,
+                            "M": true
+                        }
+                    }
+
+                    Sample payload for a orderbook message:
+                    {
+                        "stream": "btcusdt@depth10@100ms",
+                        "data": {
+                            "lastUpdateId": 1234,
+                            "bids": [
+                                ["30000.00", "0.001"],
+                                ["29999.00", "0.002"],
+                                ["29998.00", "0.003"],
+                                ["29997.00", "0.004"],
+                                ["29996.00", "0.005"],
+                                ["29995.00", "0.006"],
+                                ["29994.00", "0.007"],
+                                ["29993.00", "0.008"],
+                                ["29992.00", "0.009"],
+                                ["29991.00", "0.010"]
+                            ],
+                            "asks": [
+                                ["30000.00", "0.001"],
+                                ["30001.00", "0.002"],
+                                ["30002.00", "0.003"],
+                                ["30003.00", "0.004"],
+                                ["30004.00", "0.005"],
+                                ["30005.00", "0.006"],
+                                ["30006.00", "0.007"],
+                                ["30007.00", "0.008"],
+                                ["30008.00", "0.009"],
+                                ["30009.00", "0.010"]
+                            ]
+                        }
+                    }
+                '''
 
                 # Extract relevant data from the payload
                 stream = payload.get("stream")
