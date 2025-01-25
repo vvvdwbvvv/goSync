@@ -4,7 +4,6 @@ import json
 from kafka import KafkaProducer
 
 KAFKA_BROKER = "localhost:9092"
-KAFKA_TOPIC = "market-data"
 
 class WebSocketUtils:
     def __init__(self, uri):
@@ -30,7 +29,7 @@ class WebSocketUtils:
 class PublicStream(WebSocketUtils):
     def __init__(self, base_uri, symbols):
         self.symbols = symbols
-        self.topics = ["trade"]  # Subscription messages
+        self.topics = ["trade", "depth10@100ms"]  # Subscription messages
         streams = "/".join([f"{symbol}@{topic}" for symbol in symbols for topic in self.topics])
         uri = f"{base_uri}{streams}"
         super().__init__(uri)
@@ -49,12 +48,13 @@ class PublicStream(WebSocketUtils):
                 payload = json.loads(message)
 
                 # Extract relevant data from the payload
+                stream = payload.get("stream")
+                symbol = stream.split("@")[0]
+                topic = stream.split("@")[1]
                 data = payload.get("data")
                 if data:
-                    print(f"Received data: {data}")
-
                     # Send data to Kafka
-                    self.producer.send(KAFKA_TOPIC, value=data)
+                    self.producer.send(topic, value=data)
 
             except websockets.ConnectionClosed as e:
                 print(f"Connection closed: {e}")
@@ -65,11 +65,6 @@ class PublicStream(WebSocketUtils):
             except Exception as e:
                 print(f"Error receiving data: {e}")
                 break
-
-    async def respond_pong(self, websocket):
-        pong_message = {"event": "pong", "ts": int(asyncio.get_event_loop().time() * 1000)}
-        await websocket.send(json.dumps(pong_message))
-
 
 def main():
     base_uri = "wss://stream.binance.com:9443/stream?streams="
@@ -82,7 +77,6 @@ def main():
         print("Shutting down gracefully...")
     finally:
         asyncio.run(public_stream.close_connection())
-
 
 if __name__ == "__main__":
     main()
